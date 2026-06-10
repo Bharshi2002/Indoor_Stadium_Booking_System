@@ -66,6 +66,14 @@ export default function Register() {
       setError("Please fill in all fields."); return;
     }
     if (!/\S+@\S+\.\S+/.test(email)) { setError("Please enter a valid email."); return; }
+
+    // Phone validation — Sri Lanka format
+    const cleanPhone = phone.replace(/\s+/g, "");
+    const sriLankaPhone = /^(\+94[0-9]{9}|0[0-9]{9})$/;
+    if (!sriLankaPhone.test(cleanPhone)) {
+      setError("Enter a valid Sri Lanka phone number (e.g. 0771234567 or +94771234567)"); return;
+    }
+
     if (password.length < 6) { setError("Password must be at least 6 characters."); return; }
     if (password !== confirm) { setError("Passwords do not match."); return; }
     if (isAdmin && !adminCode) { setError("Please enter the admin secret code."); return; }
@@ -109,12 +117,12 @@ export default function Register() {
         <div style={S.row} className="auth-row">
           <div style={S.fw}>
             <label style={S.label}>First Name</label>
-            <input style={inp("firstName")} type="text" placeholder="Aadhil"
+            <input style={inp("firstName")} type="text" placeholder="First name"
               value={form.firstName} onChange={set("firstName")} onFocus={focus("firstName")} onBlur={blur} />
           </div>
           <div style={S.fw}>
             <label style={S.label}>Last Name</label>
-            <input style={inp("lastName")} type="text" placeholder="Nazir"
+            <input style={inp("lastName")} type="text" placeholder="Last name"
               value={form.lastName} onChange={set("lastName")} onFocus={focus("lastName")} onBlur={blur} />
           </div>
         </div>
@@ -122,22 +130,27 @@ export default function Register() {
         {/* Username */}
         <div style={S.fw}>
           <label style={S.label}>Username</label>
-          <input style={inp("username")} type="text" placeholder="aadhilnazir"
+          <input style={inp("username")} type="text" placeholder="Choose a username"
             value={form.username} onChange={set("username")} onFocus={focus("username")} onBlur={blur} />
         </div>
 
         {/* Email */}
         <div style={S.fw}>
           <label style={S.label}>Email</label>
-          <input style={inp("email")} type="email" placeholder="aadhil@email.com"
+          <input style={inp("email")} type="email" placeholder="Your email address"
             value={form.email} onChange={set("email")} onFocus={focus("email")} onBlur={blur} />
         </div>
 
         {/* Phone */}
         <div style={S.fw}>
           <label style={S.label}>Phone Number</label>
-          <input style={inp("phone")} type="tel" placeholder="0771234567"
-            value={form.phone} onChange={set("phone")} onFocus={focus("phone")} onBlur={blur} />
+          <input style={inp("phone")} type="tel" placeholder="0771234567 or +94771234567"
+            value={form.phone}
+            onChange={e => {
+              const val = e.target.value.replace(/[^\d+\s]/g, "");
+              setForm(f => ({ ...f, phone: val }));
+            }}
+            onFocus={focus("phone")} onBlur={blur} maxLength={15} />
         </div>
 
         {/* Password */}
@@ -158,7 +171,7 @@ export default function Register() {
           <label style={S.label}>Confirm Password</label>
           <div style={S.passWrap}>
             <input style={{ ...inp("confirm"), paddingRight:44 }} type={showPass2 ? "text" : "password"}
-              placeholder="Repeat password" value={form.confirm}
+              placeholder="Repeat your password" value={form.confirm}
               onChange={set("confirm")} onFocus={focus("confirm")} onBlur={blur} />
             <button style={S.eyeBtn} type="button" onClick={() => setShowPass2(s => !s)}>
               {showPass2 ? <EyeClosed /> : <EyeOpen />}
