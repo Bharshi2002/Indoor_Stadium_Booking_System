@@ -2,6 +2,7 @@
 // ── Central API service — all calls go through here ─────────────────────────
 
 const BASE = "http://127.0.0.1:8000/api";
+
 async function request(method, path, body = null) {
   const token = localStorage.getItem("token");
 
@@ -82,6 +83,17 @@ export function getMyBookings() {
 
 export function createBooking(payload) {
   return request("POST", "/bookings", payload);
+}
+
+// ── Facility Blocks (admin) ───────────────────────────────────────────────────
+export function adminGetFacilityBlocks() {
+  return request("GET", "/admin/facility-blocks");
+}
+export function adminAddFacilityBlock(payload) {
+  return request("POST", "/admin/facility-blocks", payload);
+}
+export function adminDeleteFacilityBlock(id) {
+  return request("DELETE", `/admin/facility-blocks/${id}`);
 }
 
 // ── Holidays ──────────────────────────────────────────────────────────────────
