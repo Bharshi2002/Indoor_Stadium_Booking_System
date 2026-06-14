@@ -1,0 +1,111 @@
+/* src/mobile.css - Mobile responsive styles for all pages */
+
+/* ── NAVBAR ─────────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .nb-inner { padding: 0 16px !important; height: 56px !important; }
+  .nb-logo-text { font-size: 16px !important; }
+  .nb-logo-icon { width: 28px !important; height: 28px !important; font-size: 14px !important; }
+  
+  /* Show links on mobile too - hide burger */
+  .nb-burger { display: none !important; }
+  .nb-links { display: flex !important; gap: 0 !important; }
+  .nb-link { font-size: 11px !important; padding: 6px 8px !important; }
+  .nb-auth { display: flex !important; gap: 4px !important; }
+  .nb-ghost { font-size: 11px !important; padding: 6px 10px !important; }
+  .nb-solid { font-size: 11px !important; padding: 6px 10px !important; }
+  .nb-uname { display: none !important; }
+  .nb-logout { font-size: 11px !important; padding: 6px 10px !important; }
+  .nb-admin-badge { display: none !important; }
+}
+
+@media (max-width: 480px) {
+  .nb-link { font-size: 10px !important; padding: 5px 6px !important; }
+  .nb-ghost, .nb-solid, .nb-logout { font-size: 10px !important; padding: 5px 8px !important; }
+}
+
+/* ── HOME PAGE ───────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .home-hero { padding: 28px 16px 24px !important; }
+  .home-h1 { font-size: 42px !important; letter-spacing: 1px !important; }
+  .home-btn-row { flex-wrap: wrap !important; gap: 10px !important; }
+  .home-stats-row { 
+    grid-template-columns: repeat(2, 1fr) !important; 
+    padding: 20px 16px !important; 
+    gap: 10px !important; 
+  }
+  .home-section { padding: 0 16px 32px !important; }
+  .home-facility-grid { 
+    grid-template-columns: repeat(2, 1fr) !important; 
+    gap: 10px !important; 
+  }
+  .home-welcome { padding: 0 16px 16px !important; }
+  .home-cta { padding: 0 16px 32px !important; }
+  .home-cta-box { 
+    padding: 28px 20px !important; 
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+  .home-footer-inner { padding: 28px 16px 16px !important; }
+  .home-footer-grid { 
+    grid-template-columns: 1fr !important; 
+    gap: 20px !important; 
+  }
+}
+
+/* ── BOOKING PAGE ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Stack booking layout vertically */
+  .booking-page { 
+    grid-template-columns: 1fr !important; 
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .booking-summary {
+    position: relative !important;
+    height: auto !important;
+    border-left: none !important;
+    border-top: 1px solid #d1e7d1 !important;
+  }
+  .booking-main { padding: 20px 16px !important; }
+  .booking-summary { padding: 20px 16px !important; }
+  .facility-grid-booking {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+  .slot-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 6px !important;
+  }
+  .session-wrap { width: 100% !important; }
+  .session-btn { flex: 1 !important; padding: 10px 12px !important; }
+}
+
+/* ── LOGIN & REGISTER ────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .auth-card { 
+    padding: 32px 20px !important; 
+    margin: 16px !important;
+    border-radius: 16px !important;
+  }
+}
+
+/* ── DASHBOARD ───────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .dashboard-stats {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  .dashboard-inner { padding: 24px 16px !important; }
+  .booking-card { flex-direction: column !important; align-items: flex-start !important; }
+}
+
+/* ── ADMIN ───────────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .admin-inner { padding: 24px 16px !important; }
+  .admin-stats { 
+    grid-template-columns: repeat(2, 1fr) !important; 
+    gap: 10px !important;
+  }
+  .admin-table { font-size: 11px !important; }
+  .admin-table th, .admin-table td { padding: 8px 6px !important; }
+}
