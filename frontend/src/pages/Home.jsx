@@ -9,16 +9,16 @@ const S = {
 
   // Hero
   hero: { position:"relative", zIndex:1, maxWidth:900, margin:"0 auto", padding:"48px 40px 40px", display:"flex", flexDirection:"column", alignItems:"flex-start" },
-  badge: { display:"inline-flex", alignItems:"center", gap:8, background:"linear-gradient(135deg, #dcfce7, #bbf7d0)", border:"1px solid #86efac", borderRadius:100, padding:"6px 16px", fontSize:12, fontWeight:600, color:"#15803d", letterSpacing:1, textTransform:"uppercase", marginBottom:16, boxShadow:"0 0 12px rgba(22,163,74,0.15)" },
-  h1: { fontFamily:"'Bebas Neue',sans-serif", fontSize:88, letterSpacing:3, lineHeight:0.95, color:"#14532d", marginBottom:12, marginTop:0, maxWidth:700, textShadow:"0 2px 8px rgba(22,163,74,0.15)" },
-  h1a: { color:"#16a34a", textShadow:"0 0 20px rgba(22,163,74,0.3)" },
-  sub: { fontSize:16, color:"#6b7280", maxWidth:520, lineHeight:1.6, marginBottom:28 },
+  badge: { display:"inline-flex", alignItems:"center", gap:8, background:"rgba(255,255,255,0.15)", border:"1px solid rgba(255,255,255,0.3)", borderRadius:100, padding:"6px 16px", fontSize:12, fontWeight:600, color:"#ffffff", letterSpacing:1, textTransform:"uppercase", marginBottom:16 },
+  h1: { fontFamily:"'Bebas Neue',sans-serif", fontSize:88, letterSpacing:3, lineHeight:0.95, color:"#ffffff", marginBottom:12, marginTop:0, maxWidth:700, textShadow:"0 4px 16px rgba(0,0,0,0.4)" },
+  h1a: { color:"#4ade80", textShadow:"0 0 20px rgba(74,222,128,0.5)" },
+  sub: { fontSize:16, color:"rgba(255,255,255,0.85)", maxWidth:520, lineHeight:1.6, marginBottom:28 },
   btnRow: { display:"flex", gap:16, flexWrap:"wrap" },
   btnP: { display:"inline-block", textDecoration:"none", fontFamily:"'Bebas Neue',sans-serif", fontSize:18, letterSpacing:3, padding:"16px 40px", borderRadius:12, background:"#16a34a", color:"#f0f7f0", cursor:"pointer", border:"none" },
-  btnS: { display:"inline-block", textDecoration:"none", fontFamily:"'DM Sans',sans-serif", fontSize:14, fontWeight:600, padding:"16px 32px", borderRadius:12, background:"#ffffff", color:"#14532d", border:"1px solid #d1e7d1" },
+  btnS: { display:"inline-block", textDecoration:"none", fontFamily:"'DM Sans',sans-serif", fontSize:14, fontWeight:600, padding:"16px 32px", borderRadius:12, background:"rgba(255,255,255,0.15)", color:"#ffffff", border:"1px solid rgba(255,255,255,0.4)" },
 
   // Welcome back banner (logged in)
-  welcomeBanner: { position:"relative", zIndex:1, maxWidth:900, margin:"0 auto", padding:"0 40px 32px" },
+  welcomeBanner: { position:"relative", zIndex:1, maxWidth:900, margin:"0 auto", padding:"32px 40px 0" },
   welcomeBox: { background:"linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)", border:"1px solid #86efac", boxShadow:"0 4px 16px rgba(22,163,74,0.1)", borderRadius:16, padding:"24px 32px", display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:16 },
   welcomeText: { fontSize:16, fontWeight:600, color:"#14532d" },
   welcomeSub: { fontSize:13, color:"#6b7280", marginTop:4 },
@@ -34,13 +34,13 @@ const S = {
   sectionTitle: { fontFamily:"'Bebas Neue',sans-serif", fontSize:42, letterSpacing:2, color:"#14532d", marginBottom:8 },
   sectionSub: { fontSize:14, color:"#6b7280", marginBottom:40 },
   facilityGrid: { display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:16 },
-  facilityCard: { background:"#ffffff", border:"1px solid #d1e7d1", borderRadius:16, overflow:"hidden", transition:"all .25s", boxShadow:"0 4px 16px rgba(22,163,74,0.08)", cursor:"pointer" },
+  facilityCard: { background:"#ffffff", border:"1px solid #d1e7d1", borderRadius:16, overflow:"hidden", transition:"all .25s", boxShadow:"0 4px 16px rgba(22,163,74,0.08)", cursor:"pointer", display:"flex", flexDirection:"column" },
   facilityPhoto: { width:"100%", height:160, objectFit:"cover", display:"block" },
   lightboxOverlay: { position:"fixed", inset:0, background:"rgba(0,0,0,0.85)", zIndex:9999, display:"flex", alignItems:"center", justifyContent:"center", padding:"20px" },
   lightboxImg: { maxWidth:"90vw", maxHeight:"85vh", objectFit:"contain", borderRadius:12, boxShadow:"0 24px 64px rgba(0,0,0,0.5)" },
   lightboxClose: { position:"absolute", top:20, right:24, background:"rgba(255,255,255,0.15)", border:"none", color:"#ffffff", fontSize:28, width:44, height:44, borderRadius:"50%", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", backdropFilter:"blur(4px)" },
   lightboxName: { position:"absolute", bottom:24, left:"50%", transform:"translateX(-50%)", background:"rgba(0,0,0,0.6)", color:"#ffffff", fontSize:14, fontWeight:600, padding:"8px 20px", borderRadius:20, whiteSpace:"nowrap", backdropFilter:"blur(4px)" },
-  facilityCardBody: { padding:"16px 20px 20px" },
+  facilityCardBody: { padding:"16px 20px 20px", display:"flex", flexDirection:"column", flex:1 },
   facilityAccent: { position:"absolute", top:0, left:0, right:0, height:2, background:"#16a34a" },
   facilityIcon: { fontSize:36, marginBottom:14, display:"block" },
   facilityName: { fontSize:15, fontWeight:600, color:"#14532d", marginBottom:4 },
@@ -133,11 +133,29 @@ export default function Home() {
     document.head.appendChild(style);
     return () => { const s = document.getElementById("home-mobile-css"); if(s) s.remove(); };
   }, []);
+
+  const slideshowPhotos = [
+    "https://images.unsplash.com/photo-1776999035766-9c2b5cddf613?w=1920&h=900&fit=crop&q=90",
+    "https://images.unsplash.com/photo-1660110661640-671af78f39b7?w=1920&h=900&fit=crop&q=90",
+    "https://images.unsplash.com/photo-1581412037192-c197ef399462?w=1920&h=900&fit=crop&q=90",
+    "https://images.unsplash.com/photo-1599204606350-d7fb87de75f6?w=1920&h=900&fit=crop&q=90",
+    "https://images.unsplash.com/photo-1666901356149-93f2eb3ba5a2?w=1920&h=900&fit=crop&q=90",
+    "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=1920&h=900&fit=crop&q=90",
+  ];
+
+  // Auto-rotate slideshow every 4 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSlideIndex(i => (i + 1) % slideshowPhotos.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
   const navigate   = useNavigate();
   const [facilities, setFacilities] = useState([]);
   const [loggedIn,   setLoggedIn]   = useState(false);
   const [username,   setUsername]   = useState("");
   const [lightbox,   setLightbox]   = useState(null); // { src, name }
+  const [slideIndex,  setSlideIndex]  = useState(0);
 
   useEffect(() => {
     const link = document.createElement("link");
@@ -174,7 +192,29 @@ export default function Home() {
       <div style={S.content}>
 
         {/* ── HERO ── */}
-        <div style={S.hero} className="home-hero">
+        <div style={{ position:"relative", overflow:"hidden", minHeight:600 }}>
+          {/* Slideshow images */}
+          {slideshowPhotos.map((src, i) => (
+            <div key={i} style={{
+              position:"absolute", inset:0,
+              backgroundImage:`url('${src}')`,
+              backgroundSize:"cover",
+              backgroundPosition:"center center",
+              backgroundRepeat:"no-repeat",
+              opacity: i === slideIndex ? 1 : 0,
+              transition:"opacity 1.2s ease-in-out",
+              zIndex:0,
+            }} />
+          ))}
+          {/* Dark overlay */}
+          <div style={{ position:"absolute", inset:0, background:"rgba(5,46,22,0.72)", zIndex:1 }} />
+          {/* Slide dots */}
+          <div style={{ position:"absolute", bottom:20, left:"50%", transform:"translateX(-50%)", display:"flex", gap:8, zIndex:3 }}>
+            {slideshowPhotos.map((_, i) => (
+              <div key={i} onClick={() => setSlideIndex(i)} style={{ width: i===slideIndex ? 24 : 8, height:8, borderRadius:4, background: i===slideIndex ? "#4ade80" : "rgba(255,255,255,0.4)", cursor:"pointer", transition:"all .3s" }} />
+            ))}
+          </div>
+          <div style={{ ...S.hero, position:"relative", zIndex:2 }} className="home-hero">
           <div style={S.badge} className="home-badge">🏟️ Horizon Indoor Complex</div>
           <h1 style={S.h1} className="home-h1">
             Book Your <span style={S.h1a}>Court.</span><br />
@@ -194,10 +234,11 @@ export default function Home() {
             href="https://maps.app.goo.gl/QgJ2E8Ay8GK2NF8X6"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ display:"inline-flex", alignItems:"center", gap:8, marginTop:16, textDecoration:"none", background:"transparent", color:"#16a34a", fontSize:13, fontWeight:600, padding:"8px 16px", borderRadius:8, border:"1px solid #d1e7d1", cursor:"pointer" }}
+            style={{ display:"inline-flex", alignItems:"center", gap:8, marginTop:16, textDecoration:"none", background:"rgba(255,255,255,0.15)", color:"#ffffff", fontSize:13, fontWeight:600, padding:"8px 16px", borderRadius:8, border:"1px solid rgba(255,255,255,0.4)", cursor:"pointer" }}
           >
             📍 Madawala Bazzar, Kandy — View on Google Maps
           </a>
+          </div>
         </div>
 
         {/* ── WELCOME BANNER (logged in only) ── */}
@@ -249,7 +290,7 @@ export default function Home() {
                     <div style={S.facilityName}>{f.name}</div>
                   </div>
                   <div style={S.facilityTag}>{f.tag}</div>
-                  <Link to="/booking" style={{ display:"inline-block", marginTop:12, textDecoration:"none", background:"linear-gradient(135deg, #16a34a 0%, #15803d 100%)", color:"#ffffff", fontSize:12, fontWeight:700, padding:"10px 20px", borderRadius:8, boxShadow:"0 4px 14px rgba(22,163,74,0.4), 0 0 0 1px rgba(22,163,74,0.2)", letterSpacing:"0.5px" }}>
+                  <Link to="/booking" style={{ display:"inline-block", marginTop:"auto", paddingTop:12, textDecoration:"none", background:"linear-gradient(135deg, #16a34a 0%, #15803d 100%)", color:"#ffffff", fontSize:12, fontWeight:700, padding:"10px 20px", borderRadius:8, boxShadow:"0 4px 14px rgba(22,163,74,0.4), 0 0 0 1px rgba(22,163,74,0.2)", letterSpacing:"0.5px" }}>
                     Book Now →
                   </Link>
                 </div>
