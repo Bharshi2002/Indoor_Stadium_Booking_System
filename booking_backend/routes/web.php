@@ -1,18 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+// Dummy login route to prevent "Route [login] not defined" error
+// Laravel redirects here when unauthenticated — we return JSON instead
+Route::get('/login', function (Request $request) {
+    return response()->json([
+        'message' => 'Unauthenticated. Please login first.',
+    ], 401);
+})->name('login');
