@@ -36,8 +36,7 @@ const EyeClosed = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="no
 export default function Register() {
   const navigate = useNavigate();
 
-  const [form,     setForm]     = useState({ firstName:"", lastName:"", username:"", email:"", phone:"", password:"", confirm:"", adminCode:"" });
-  const [isAdmin,  setIsAdmin]  = useState(false);
+  const [form,     setForm]     = useState({ firstName:"", lastName:"", username:"", email:"", phone:"", password:"", confirm:"" });
   const [error,    setError]    = useState("");
   const [success,  setSuccess]  = useState("");
   const [loading,  setLoading]  = useState(false);
@@ -60,23 +59,22 @@ export default function Register() {
 
   const handleSubmit = async () => {
     setError(""); setSuccess("");
-    const { firstName, lastName, username, email, phone, password, confirm, adminCode } = form;
+    const { firstName, lastName, username, email, phone, password, confirm } = form;
 
     if (!firstName || !lastName || !username || !email || !phone || !password || !confirm) {
       setError("Please fill in all fields."); return;
     }
     if (!/\S+@\S+\.\S+/.test(email)) { setError("Please enter a valid email."); return; }
 
-    // Phone validation — Sri Lanka format
+    // Phone validation — Sri Lanka format (local or international, spaces allowed)
     const cleanPhone = phone.replace(/\s+/g, "");
-    const sriLankaPhone = /^(\+94[0-9]{9}|0[0-9]{9})$/;
+    const sriLankaPhone = /^(\+94[\d]{9}|0[\d]{9})$/;
     if (!sriLankaPhone.test(cleanPhone)) {
       setError("Enter a valid Sri Lanka phone number (e.g. 0771234567 or +94771234567)"); return;
     }
 
     if (password.length < 6) { setError("Password must be at least 6 characters."); return; }
     if (password !== confirm) { setError("Passwords do not match."); return; }
-    if (isAdmin && !adminCode) { setError("Please enter the admin secret code."); return; }
 
     setLoading(true);
     try {
@@ -88,11 +86,10 @@ export default function Register() {
         phone,
         password,
         password_confirmation: confirm,
-        role:                  isAdmin ? "admin" : "user",
-        admin_code:            isAdmin ? adminCode : undefined,
+        role:                  "user",
       });
       setSuccess(`Account created! Welcome, ${data.user.username}`);
-      setTimeout(() => navigate(data.user.role === "admin" ? "/admin" : "/dashboard"), 1000);
+      setTimeout(() => navigate("/dashboard"), 1000);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -141,7 +138,7 @@ export default function Register() {
             value={form.email} onChange={set("email")} onFocus={focus("email")} onBlur={blur} />
         </div>
 
-        {/* Phone */}
+        {/* Phone — maxLength 20 to allow +94 format with spaces */}
         <div style={S.fw}>
           <label style={S.label}>Phone Number</label>
           <input style={inp("phone")} type="tel" placeholder="0771234567 or +94771234567"
@@ -150,7 +147,10 @@ export default function Register() {
               const val = e.target.value.replace(/[^\d+\s]/g, "");
               setForm(f => ({ ...f, phone: val }));
             }}
-            onFocus={focus("phone")} onBlur={blur} maxLength={15} />
+            onFocus={focus("phone")} onBlur={blur} maxLength={20} />
+          <div style={{ fontSize:11, color:"#6b7280", marginTop:4 }}>
+            Format: 0771234567 or +94771234567
+          </div>
         </div>
 
         {/* Password */}
@@ -178,22 +178,6 @@ export default function Register() {
             </button>
           </div>
         </div>
-
-        {/* Admin toggle */}
-        <div style={S.adminToggle} onClick={() => setIsAdmin(a => !a)}>
-          <div style={S.adminBox(isAdmin)}>
-            {isAdmin && <span style={{ fontSize:11, color:"#ffffff", fontWeight:700 }}>✓</span>}
-          </div>
-          <span style={S.adminLabel}>Register as Admin</span>
-        </div>
-
-        {isAdmin && (
-          <div style={S.adminNote}>
-            <div style={S.adminNoteText}>⚠️ Enter the admin secret code provided by your system administrator</div>
-            <input style={{ ...inp("adminCode"), marginTop:4 }} type="password" placeholder="Admin secret code"
-              value={form.adminCode} onChange={set("adminCode")} onFocus={focus("adminCode")} onBlur={blur} />
-          </div>
-        )}
 
         <button style={{ ...S.btn, ...(loading ? S.btnLoading : {}) }} onClick={handleSubmit} disabled={loading}>
           {loading ? "CREATING..." : "CREATE ACCOUNT"}

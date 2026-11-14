@@ -1,7 +1,7 @@
 // src/api.js
 // ── Central API service — all calls go through here ─────────────────────────
 
-const BASE = "http://127.0.0.1:8000/api";
+const BASE = import.meta.env.VITE_API_URL || "https://horizon-indoor-backend-production.up.railway.app/api";
 
 async function request(method, path, body = null) {
   const token = localStorage.getItem("token");
@@ -48,6 +48,17 @@ export async function apiForgotPassword(email) {
 export async function apiResetPassword(email, token, password, password_confirmation) {
   return request("POST", "/reset-password", { email, token, password, password_confirmation });
 }
+
+// ── Profile ───────────────────────────────────────────────────────────────────
+export function getMe() {
+  return request("GET", "/me");
+}
+
+export function updateMe(payload) {
+  return request("PUT", "/me", payload);
+}
+
+// ── Facilities ────────────────────────────────────────────────────────────────
 export function getFacilities() {
   return request("GET", "/facilities");
 }
@@ -85,6 +96,11 @@ export function createBooking(payload) {
   return request("POST", "/bookings", payload);
 }
 
+// ── Facility Blocks (public) ──────────────────────────────────────────────────
+export function getUpcomingBlocks() {
+  return request("GET", "/facility-blocks/upcoming");
+}
+
 // ── Facility Blocks (admin) ───────────────────────────────────────────────────
 export function adminGetFacilityBlocks() {
   return request("GET", "/admin/facility-blocks");
@@ -116,8 +132,14 @@ export function adminAddHoliday(date, name) {
 export function adminDeleteHoliday(id) {
   return request("DELETE", `/admin/holidays/${id}`);
 }
+
+// ── Admin ─────────────────────────────────────────────────────────────────────
 export function adminStats(period = 'all') {
   return request("GET", `/admin/stats?period=${period}`);
+}
+
+export function adminRevenueRecords(period = 'all') {
+  return request("GET", `/admin/revenue?period=${period}`);
 }
 
 export function adminAllBookings(filters = {}) {
@@ -171,6 +193,6 @@ function _clearSession() {
   );
 }
 
-export const isLoggedIn = () => localStorage.getItem("isLoggedIn") === "true";
-export const getRole    = () => localStorage.getItem("role") || "user";
+export const isLoggedIn  = () => localStorage.getItem("isLoggedIn") === "true";
+export const getRole     = () => localStorage.getItem("role") || "user";
 export const getUsername = () => localStorage.getItem("username") || "";

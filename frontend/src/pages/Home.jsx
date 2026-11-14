@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { getFacilities, isLoggedIn, getUsername } from "../api";
 
 const S = {
-  page: { fontFamily:"'DM Sans',sans-serif", background:"linear-gradient(180deg, #f0fdf4 0%, #ffffff 40%)", minHeight:"100vh", color:"#14532d", position:"relative", display:"flex", flexDirection:"column" },
+  page: { fontFamily:"'DM Sans',sans-serif", background:"linear-gradient(180deg, #f0fdf4 0%, #ffffff 40%)", minHeight:"100vh", color:"#14532d", position:"relative", display:"flex", flexDirection:"column", overflowX:"hidden" },
   lines: { position:"fixed", inset:0, background:"repeating-linear-gradient(90deg,transparent,transparent 120px,rgba(22,163,74,0.03) 120px,rgba(22,163,74,0.03) 121px),repeating-linear-gradient(0deg,transparent,transparent 80px,rgba(22,163,74,0.03) 80px,rgba(22,163,74,0.03) 81px)", pointerEvents:"none", zIndex:0 },
   content: { flex:1 },
 
@@ -24,8 +24,8 @@ const S = {
   welcomeSub: { fontSize:13, color:"#6b7280", marginTop:4 },
 
   // Stats
-  statsRow: { position:"relative", zIndex:1, maxWidth:900, margin:"0 auto", padding:"32px 40px", display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:16 },
-  statCard: { flex:1, minWidth:180, background:"#ffffff", border:"1px solid #d1e7d1", borderRadius:16, padding:"28px 24px", borderTop:"3px solid #16a34a", boxShadow:"0 4px 20px rgba(22,163,74,0.08)", transition:"transform .2s, box-shadow .2s" },
+  statsRow: { position:"relative", zIndex:1, maxWidth:900, margin:"0 auto", padding:"32px 40px", display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:16, width:"100%", boxSizing:"border-box" },
+  statCard: { flex:1, minWidth:0, background:"#ffffff", border:"1px solid #d1e7d1", borderRadius:16, padding:"28px 24px", borderTop:"3px solid #16a34a", boxShadow:"0 4px 20px rgba(22,163,74,0.08)", transition:"transform .2s, box-shadow .2s", boxSizing:"border-box" },
   statNum: { fontFamily:"'Bebas Neue',sans-serif", fontSize:52, color:"#16a34a", lineHeight:1, letterSpacing:2, marginBottom:8, textShadow:"0 0 20px rgba(22,163,74,0.25)" },
   statLabel: { fontSize:13, color:"#6b7280", marginTop:6, fontWeight:500 },
 
@@ -82,16 +82,29 @@ export default function Home() {
     style.id = "home-mobile-css";
     style.innerHTML = `
       @media (max-width: 768px) {
-        /* Hero */
-        .home-hero { padding: 28px 16px 24px !important; }
+        /* ── Hero: shrink to content height — removes giant empty dark space ── */
+        .home-hero-section {
+          min-height: 0 !important;
+          padding-bottom: 48px !important;
+        }
+        .home-hero { padding: 24px 16px 20px !important; }
         .home-h1 { font-size: 46px !important; letter-spacing: 2px !important; }
+        .home-sub { font-size: 14px !important; }
         .home-btn-row { flex-wrap: wrap !important; gap: 10px !important; }
 
         /* Stats */
         .home-stats-row { 
           grid-template-columns: repeat(2, 1fr) !important; 
           padding: 20px 16px !important; 
-          gap: 10px !important; 
+          gap: 10px !important;
+          width: 100% !important;
+          box-sizing: border-box !important;
+          overflow: hidden !important;
+        }
+        .home-stats-row > div {
+          min-width: 0 !important;
+          box-sizing: border-box !important;
+          padding: 20px 16px !important;
         }
 
         /* Facilities */
@@ -101,16 +114,24 @@ export default function Home() {
           gap: 10px !important; 
         }
 
-        /* Welcome banner */
-        .home-welcome { padding: 0 16px 16px !important; }
+        /* Welcome banner — needs top gap so it doesn't sit flush against hero */
+        .home-welcome { padding: 20px 16px 0 !important; }
 
         /* CTA */
         .home-cta { padding: 0 16px 32px !important; }
         .home-cta-box { 
-          padding: 28px 20px !important; 
+          padding: 24px 20px !important; 
           flex-direction: column !important;
-          align-items: flex-start !important;
-          gap: 20px !important;
+          align-items: stretch !important;
+          gap: 16px !important;
+        }
+        .home-cta-title { font-size: 32px !important; letter-spacing: 1px !important; }
+        .home-cta-sub { font-size: 13px !important; }
+        .home-cta-btn {
+          width: 100% !important;
+          text-align: center !important;
+          box-sizing: border-box !important;
+          padding: 14px 20px !important;
         }
 
         /* Footer */
@@ -122,10 +143,16 @@ export default function Home() {
         }
         .home-footer-grid > div { font-size: 14px !important; }
         .home-footer-grid a, .home-footer-grid div { font-size: 13px !important; }
+        .home-footer-bottom {
+          flex-direction: column !important;
+          align-items: flex-start !important;
+          gap: 6px !important;
+        }
       }
 
       @media (max-width: 480px) {
-        .home-h1 { font-size: 38px !important; }
+        .home-hero-section { padding-bottom: 44px !important; }
+        .home-h1 { font-size: 36px !important; }
         .home-footer-grid { grid-template-columns: 1fr !important; }
         .home-facility-grid { grid-template-columns: repeat(2, 1fr) !important; }
       }
@@ -150,6 +177,7 @@ export default function Home() {
     }, 4000);
     return () => clearInterval(timer);
   }, []);
+
   const navigate   = useNavigate();
   const [facilities, setFacilities] = useState([]);
   const [loggedIn,   setLoggedIn]   = useState(false);
@@ -192,8 +220,9 @@ export default function Home() {
       <div style={S.content}>
 
         {/* ── HERO ── */}
-        <div style={{ position:"relative", overflow:"hidden", minHeight:600 }}>
-          {/* Slideshow images */}
+        {/* CHANGE 1: added className="home-hero-section" — mobile CSS targets this to kill the empty gap */}
+        <div className="home-hero-section" style={{ position:"relative", overflow:"hidden", minHeight:600 }}>
+          {/* Slideshow background images */}
           {slideshowPhotos.map((src, i) => (
             <div key={i} style={{
               position:"absolute", inset:0,
@@ -214,30 +243,31 @@ export default function Home() {
               <div key={i} onClick={() => setSlideIndex(i)} style={{ width: i===slideIndex ? 24 : 8, height:8, borderRadius:4, background: i===slideIndex ? "#4ade80" : "rgba(255,255,255,0.4)", cursor:"pointer", transition:"all .3s" }} />
             ))}
           </div>
+          {/* Hero content */}
           <div style={{ ...S.hero, position:"relative", zIndex:2 }} className="home-hero">
-          <div style={S.badge} className="home-badge">🏟️ Horizon Indoor Complex</div>
-          <h1 style={S.h1} className="home-h1">
-            Book Your <span style={S.h1a}>Court.</span><br />
-            Play Your <span style={S.h1a}>Game.</span>
-          </h1>
-          <p style={S.sub} className="home-sub">
-            Reserve badminton courts, cricket nets, football grounds, volleyball courts
-            and more — instantly online. Day and night sessions available.
-          </p>
-          <div style={S.btnRow} className="home-btn-row">
-            <Link to="/booking" style={S.btnP}>Book Now</Link>
-            {!loggedIn && (
-              <Link to="/register" style={S.btnS}>Create Account</Link>
-            )}
-          </div>
-          <a
-            href="https://maps.app.goo.gl/QgJ2E8Ay8GK2NF8X6"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ display:"inline-flex", alignItems:"center", gap:8, marginTop:16, textDecoration:"none", background:"rgba(255,255,255,0.15)", color:"#ffffff", fontSize:13, fontWeight:600, padding:"8px 16px", borderRadius:8, border:"1px solid rgba(255,255,255,0.4)", cursor:"pointer" }}
-          >
-            📍 Madawala Bazzar, Kandy — View on Google Maps
-          </a>
+            <div style={S.badge} className="home-badge">🏟️ Horizon Indoor Complex</div>
+            <h1 style={S.h1} className="home-h1">
+              Book Your <span style={S.h1a}>Court.</span><br />
+              Play Your <span style={S.h1a}>Game.</span>
+            </h1>
+            <p style={S.sub} className="home-sub">
+              Reserve badminton courts, cricket nets, football grounds, volleyball courts
+              and more — instantly online. Day and night sessions available.
+            </p>
+            <div style={S.btnRow} className="home-btn-row">
+              <Link to="/booking" style={S.btnP}>Book Now</Link>
+              {!loggedIn && (
+                <Link to="/register" style={S.btnS}>Create Account</Link>
+              )}
+            </div>
+            <a
+              href="https://maps.app.goo.gl/QgJ2E8Ay8GK2NF8X6"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display:"inline-flex", alignItems:"center", gap:8, marginTop:16, textDecoration:"none", background:"rgba(255,255,255,0.15)", color:"#ffffff", fontSize:13, fontWeight:600, padding:"8px 16px", borderRadius:8, border:"1px solid rgba(255,255,255,0.4)", cursor:"pointer" }}
+            >
+              📍 Madawala Bazzar, Kandy — View on Google Maps
+            </a>
           </div>
         </div>
 
@@ -304,10 +334,10 @@ export default function Home() {
           <div style={S.cta} className="home-cta">
             <div style={S.ctaBox} className="home-cta-box">
               <div>
-                <div style={S.ctaTitle}>Ready to Play?</div>
-                <div style={S.ctaSub}>Register for free and book your first session today.</div>
+                <div style={S.ctaTitle} className="home-cta-title">Ready to Play?</div>
+                <div style={S.ctaSub} className="home-cta-sub">Register for free and book your first session today.</div>
               </div>
-              <Link to="/register" style={{ ...S.btnP, fontSize:16 }}>GET STARTED</Link>
+              <Link to="/register" style={{ ...S.btnP, fontSize:16 }} className="home-cta-btn">GET STARTED</Link>
             </div>
           </div>
         )}
@@ -359,7 +389,6 @@ export default function Home() {
                 <span style={S.footerItemIcon}>📍</span>
                 Madawala Bazzar, Kandy
               </a>
-
               <div style={S.footerItem}>
                 <span style={S.footerItemIcon}>🌐</span>
                 horizon-indoor.com
@@ -387,7 +416,6 @@ export default function Home() {
             <div style={S.footerCopy}>
               © 2026 Horizon Indoor. All rights reserved.
             </div>
-            {/* ── Creator credit ── */}
             <div style={S.footerCredit}>
               Designed & Developed by{" "}
               <span style={S.footerCreditName}>Aadhil Nazir</span>
