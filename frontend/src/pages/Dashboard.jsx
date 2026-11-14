@@ -25,7 +25,13 @@ const S = {
   statNum: { fontFamily:"'Bebas Neue',sans-serif", fontSize:40, color:"#16a34a", letterSpacing:2, lineHeight:1 },
   statLabel: { fontSize:12, color:"#6b7280", marginTop:6, fontWeight:500 },
   sectionTitle: { fontFamily:"'Bebas Neue',sans-serif", fontSize:28, letterSpacing:2, color:"#14532d", marginBottom:20 },
-  card: { background:"#ffffff", border:"1px solid #d1e7d1", borderRadius:16, padding:"20px 24px", marginBottom:12, display:"flex", alignItems:"center", gap:20, flexWrap:"wrap" },
+  card: { background:"#ffffff", border:"1px solid #d1e7d1", borderRadius:16, padding:"20px 24px", marginBottom:12, display:"block" },
+  cardHead: { display:"flex", alignItems:"center", gap:14, marginBottom:14 },
+  details: { display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(280px, 1fr))", columnGap:32 },
+  row: { display:"flex", justifyContent:"space-between", alignItems:"center", gap:12, padding:"8px 0", borderTop:"1px solid #eef5ee", minWidth:0 },
+  rowFull: { gridColumn:"1 / -1", alignItems:"flex-start" },
+  rowLabel: { fontSize:12, color:"#6b7280", fontWeight:500, flexShrink:0 },
+  rowValue: { fontSize:13, color:"#14532d", fontWeight:500, textAlign:"right", minWidth:0, overflowWrap:"anywhere" },
   cardIcon: { width:48, height:48, background:"#f0f7f0", border:"1px solid #d1e7d1", borderRadius:12, display:"flex", alignItems:"center", justifyContent:"center", fontSize:22, flexShrink:0 },
   cardInfo: { flex:1 },
   cardFacility: { fontSize:15, fontWeight:600, color:"#14532d", marginBottom:4 },
@@ -84,7 +90,7 @@ export default function Dashboard() {
             { num: bookings.length,                    label:"Total Bookings" },
             { num: `${totalHours} hrs`,                label:"Hours Booked" },
             { num: uniqueCourts,                       label:"Courts Used" },
-            { num: `LKR ${totalSpent.toLocaleString()}`, label:"Total Spent" },
+            { num: `LKR ${totalSpent.toLocaleString()}/-`, label:"Total Spent" },
           ].map(({ num, label }) => (
             <div key={label} style={S.statCard}>
               <div style={S.statAccent} />
@@ -130,31 +136,46 @@ export default function Dashboard() {
 
             return (
               <div key={i} style={{ ...S.card, opacity: isFinished ? 0.5 : 1, filter: isFinished ? "grayscale(40%)" : "none" }} className="dashboard-card">
-                <div style={S.cardIcon}>{ICONS[b.facility] || "🏟️"}</div>
-                <div style={S.cardInfo}>
-                  <div style={S.cardFacility}>
+                <div style={S.cardHead}>
+                  <div style={S.cardIcon}>{ICONS[b.facility] || "🏟️"}</div>
+                  <div style={{ ...S.cardFacility, marginBottom:0, minWidth:0 }}>
                     {b.facility}
                     {isFinished && <span style={{ fontSize:10, background:"#d1e7d1", color:"#6b7280", borderRadius:4, padding:"1px 6px", marginLeft:8, fontWeight:600 }}>Done</span>}
                     {b.is_today && !isFinished && <span style={{ fontSize:10, background:"#dcfce7", color:"#16a34a", borderRadius:4, padding:"1px 6px", marginLeft:8, border:"1px solid #16a34a", fontWeight:600 }}>Today</span>}
                   </div>
-                  <div style={S.cardMeta}>{b.date} · {isNight ? "🌙 Night" : "☀️ Day"} Session</div>
-                  <div style={S.cardSlots} className="dashboard-slots">
-                    {(b.slots||[]).map(s => <span key={s} style={S.slotPill(isNight)}>{s}</span>)}
-                  </div>
                 </div>
-                <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-end", gap:6, flexShrink:0, minWidth:120 }}>
-                  <div style={S.cardTotal}>LKR {(b.total||0).toLocaleString()}</div>
-                  <div style={S.confirmedBadge}>✓ Confirmed</div>
-                  {b.payment_status === 'partial' && (
-                    <div style={{ fontSize:11, color:"#dc2626", background:"#fef2f2", border:"1px solid #fecaca", borderRadius:6, padding:"2px 8px", fontWeight:600 }}>
-                      Balance: LKR {b.balance_due.toLocaleString()}
+                <div style={S.details}>
+                  <div style={S.row}><span style={S.rowLabel}>Date</span><span style={S.rowValue}>{b.date}</span></div>
+                  <div style={S.row}><span style={S.rowLabel}>Session</span><span style={S.rowValue}>{isNight ? "🌙 Night" : "☀️ Day"} Session</span></div>
+                  <div style={{ ...S.row, ...S.rowFull }}>
+                    <span style={{ ...S.rowLabel, paddingTop:3 }}>Slots</span>
+                    <div style={{ ...S.cardSlots, marginTop:0, justifyContent:"flex-end" }} className="dashboard-slots">
+                      {(b.slots||[]).map(s => <span key={s} style={S.slotPill(isNight)}>{s}</span>)}
                     </div>
-                  )}
-                  {b.payment_status === 'paid' && (
-                    <div style={{ fontSize:11, color:"#16a34a", background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:6, padding:"2px 8px", fontWeight:600 }}>
-                      Fully Paid ✅
-                    </div>
-                  )}
+                  </div>
+                  <div style={S.row}><span style={S.rowLabel}>Total</span><span style={{ ...S.cardTotal, fontSize:20 }}>LKR {(b.total||0).toLocaleString()}</span></div>
+                  <div style={S.row}><span style={S.rowLabel}>Paid</span><span style={S.rowValue}>LKR {(b.paid_amount||0).toLocaleString()}</span></div>
+                  <div style={S.row}>
+                    <span style={S.rowLabel}>Balance</span>
+                    {b.payment_status === 'partial' ? (
+                      <span style={{ fontSize:11, color:"#dc2626", background:"#fef2f2", border:"1px solid #fecaca", borderRadius:6, padding:"2px 8px", fontWeight:600 }}>
+                        LKR {b.balance_due.toLocaleString()}
+                      </span>
+                    ) : (
+                      <span style={S.rowValue}>LKR {(b.balance_due||0).toLocaleString()}</span>
+                    )}
+                  </div>
+                  <div style={S.row}>
+                    <span style={S.rowLabel}>Status</span>
+                    <span style={{ display:"flex", flexWrap:"wrap", justifyContent:"flex-end", gap:6 }}>
+                      <span style={S.confirmedBadge}>✓ Confirmed</span>
+                      {b.payment_status === 'paid' && (
+                        <span style={{ fontSize:11, color:"#16a34a", background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:6, padding:"2px 8px", fontWeight:600 }}>
+                          Fully Paid ✅
+                        </span>
+                      )}
+                    </span>
+                  </div>
                 </div>
               </div>
             );
