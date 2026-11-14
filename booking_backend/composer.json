@@ -54,12 +54,12 @@
     },
     "config": {
         "optimize-autoloader": true,
-       allow-plugins": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
             "pestphp/pest-plugin": true
         }
-    }, "preferred-install": "dist",
-        "sort-packages": true,
-        "
+    },
     "minimum-stability": "stable",
     "prefer-stable": true
 }
